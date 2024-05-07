@@ -39,7 +39,7 @@ export default class App{
 
     private initialiseDatabaseConnection():void{
         const {MONGO_USER, MONGO_PASSWORD, MONGO_URL}=process.env;
-        mongoose.connect(`mongodb://${MONGO_USER}:${MONGO_PASSWORD}${MONGO_URL}`)
+        mongoose.connect(`mongo://${MONGO_USER}:${MONGO_PASSWORD}${MONGO_URL}`)
     }
 }
 
