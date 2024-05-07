@@ -1,0 +1,12 @@
+module.exports={
+    parse:"@typescript-eslint/parser",
+    extends:[
+        "plugin:@typescript-eslint/recommended",
+        "prettier/@typescript-eslint",
+        "plugin:pretier/recommended"    
+    ],
+    parseOptions:{
+        sourceType:"module"
+    },
+    rules:{}
+}
