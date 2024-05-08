@@ -26,6 +26,7 @@ jobs:
           node-version: ${{ matrix.node-version }}
           cache: "npm"
       - name: backend build
+        working-directory: ./
         run: |
           npm i
           npm run build
