@@ -8,7 +8,6 @@ import authenticated from "@middleware/authenticated.middleware";
 import User from "@resources/user/user.interface";
 import { error } from "console";
 import { JsonWebTokenError } from "jsonwebtoken";
-import authenticatedMiddleware from "@middleware/authenticated.middleware";
 import errorMiddleware from "@middleware/error.middleware";
 class AuthController implements Controller {
   public path = "/auth";
@@ -34,19 +33,19 @@ class AuthController implements Controller {
 
       this.get
     );
-   // this.router.post(`${this.path}/logout`, authenticated, this.logout);
+    this.router.post(`${this.path}/logout`, authenticated, this.logout);
     this.router.post(`${this.path}/refresh`, authenticated, this.refresh);
   }
-  // private logout = async (
-  //   req: Request,
-  //   res: Response,
-  //   next: NextFunction
-  // ): Promise<Response | void> => {
-  //   console.log(req.headers.authorization);
-  //   req.headers.authorization = "";
-  //   console.log(req.headers.authorization);
-  //   res.status(200).json("logged out");
-  // };
+  private logout = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<Response | void> => {
+    this.AuthService.logout(
+      req.headers.authorization?.replace("Bearer ", "") as string
+    );
+    res.status(200).json("logged out");
+  };
   private refresh = async (
     req: Request,
     res: Response,
@@ -57,10 +56,7 @@ class AuthController implements Controller {
       ""
     ) as string;
     try {
-      const token = await this.AuthService.refresh(
-        refreshToken,
-        req.user as User
-      );
+      const token = await this.AuthService.refresh(refreshToken);
       res.status(200).json({ token });
     } catch (error: any) {
       res.status(400).json({ error: error.message });
@@ -74,6 +70,7 @@ class AuthController implements Controller {
     next: NextFunction
   ): Promise<Response | void> => {
     try {
+      await authenticated(req, res, next);
       res.status(200).json("Secret data");
     } catch (error: any) {
       res.status(400).json({ error: error.message });

@@ -16,35 +16,48 @@ class AuthService {
 
     return createdUser;
   }
-  public async refresh(
-    tokenInfo: string,
-    userInfo: User
-  ): Promise<String | Error> {
-    const verify = await token.verifyToken(tokenInfo);
-    const user = await this.user.findOne({ email: userInfo.email });
+  public async refresh(tokenInfo: string): Promise<String | Error> {
+    const user = await this.user.findOne({ token: tokenInfo });
     if (!user) {
       throw new Error("User not found");
     }
-    return token.createToken(user, "7d");
+    const newToken = await token.createToken(user, "7d");
+    await this.user.findOneAndUpdate(
+      { token: tokenInfo },
+      { token: newToken },
+      { new: true }
+    );
+    return newToken;
   }
-  public async login(email: string, password: string): Promise<string | Error> {
-    const user = await this.user.findOne({ email: email });
-    if (!user) {
+  public async login(email: string, password: string): Promise<User | Error> {
+    const userInfo = await this.user.findOne({ email: email });
+    if (!userInfo) {
       throw new Error("User not found");
     }
-    if (await user.comparePassword(password)) {
-      return token.createToken(user);
+    if (await userInfo.comparePassword(password)) {
+      await this.user.findOneAndUpdate(
+        { email: email },
+        { token: token.createToken(userInfo) },
+        { new: true }
+      );
+      const updatedUser = (await this.user.findOne({ email: email })) as User;
+      return updatedUser;
     } else {
       throw new Error("Wrong password");
     }
   }
-  // public async logout(tokenInfo: string): Promise<String | Error> {
-  //   if ((await token.verifyToken(tokenInfo)) instanceof Error) {
-  //     throw new Error("Invalid token");
-  //   }
-
-  //   return token.createToken(tokenInfo);
-  // }
+  public async logout(token: string): Promise<String | Error> {
+    const user = await this.user.findOne({ token: token });
+    if (!user) {
+      throw new Error("User not found");
+    }
+    await this.user.findOneAndUpdate(
+      { token: token },
+      { token: "" },
+      { new: true }
+    );
+    return "User logged out";
+  }
   public async verify(tokenInfo: string): Promise<Token | Error> {
     const verify = await token.verifyToken(tokenInfo);
     return verify;

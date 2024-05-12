@@ -7,6 +7,7 @@ export default function errorMiddleware(
   res: Response,
   next: NextFunction
 ): void {
-  const status = error.status;
+  const status = error.status || 500;
   const message = error.message;
+  res.status(status).json({ error: message });
 }

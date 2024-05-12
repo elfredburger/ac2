@@ -9,13 +9,14 @@ async function authenticatedMiddleware(
   req: Request,
   res: Response,
   next: NextFunction
-): Promise<Response | void> {
-  const bearer = req.headers.authorization;
-  if (!bearer || !bearer.startsWith("Bearer ")) {
-    return next(new HttpException(401, "Unauthorized"));
-  }
-  const accessToken = bearer.split("Bearer ")[1].trim();
+): Promise<Response | Error | void> {
+  const bearer = req.headers.authorization as string;
   try {
+    if (!bearer || !bearer.startsWith("Bearer ")) {
+      return next(new HttpException(401, "Unauthorized"));
+    }
+    const accessToken = bearer.split("Bearer ")[1].trim();
+
     const payload: Token | jwt.JsonWebTokenError = await token.verifyToken(
       accessToken
     );
@@ -23,7 +24,7 @@ async function authenticatedMiddleware(
       return next(new HttpException(401, "Unauthorized"));
     }
     const user = await userModel
-      .findById(payload.id)
+      .findOne({ token: accessToken })
       .select("-password")
       .exec();
     if (!user) {
@@ -32,7 +33,7 @@ async function authenticatedMiddleware(
     req.user = user;
     next();
   } catch (error) {
-    return next(new HttpException(401, "Unauthorized"));
+    next(error);
   }
 }
 export default authenticatedMiddleware;

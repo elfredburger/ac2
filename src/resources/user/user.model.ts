@@ -14,6 +14,21 @@ const userSchema = new Schema<User>({
     type: String,
     required: true,
   },
+  role: {
+    type: String,
+    default: "user",
+  },
+  createdAt: {
+    type: Date,
+    default: Date.now,
+  },
+  updatedAt: {
+    type: Date,
+    default: Date.now,
+  },
+  token: {
+    type: String,
+  },
 });
 
 userSchema.pre("save", async function (next) {
