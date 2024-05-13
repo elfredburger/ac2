@@ -33,8 +33,10 @@ export default class App {
   }
 
   private initialiseDatabaseConnection(): void {
-    const { MONGO_USER, MONGO_PASSWORD, MONGO_URL } = process.env;
-    mongoose.connect(`mongodb://${MONGO_USER}:${MONGO_PASSWORD}@${MONGO_URL}`);
+    const { MONGO_USER, MONGO_PASSWORD, MONGO_URL, DB_PREFIX } = process.env;
+    mongoose.connect(
+      `${DB_PREFIX}${MONGO_USER}:${MONGO_PASSWORD}@${MONGO_URL}`
+    );
   }
   public listen(): void {
     this.express.listen(this.port, () => {
