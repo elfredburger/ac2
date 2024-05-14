@@ -9,10 +9,12 @@ import User from "@resources/user/user.interface";
 import { error } from "console";
 import { JsonWebTokenError } from "jsonwebtoken";
 import errorMiddleware from "@middleware/error.middleware";
+import rbacMiddleware from "@middleware/rbac.middleware";
 class AuthController implements Controller {
   public path = "/auth";
   public router = Router();
   private AuthService = new AuthService();
+
   constructor() {
     this.initialiseRoutes();
   }
@@ -30,12 +32,20 @@ class AuthController implements Controller {
     this.router.get(
       `${this.path}/get`,
       authenticated,
-
+      (req: Request, res: Response, next: NextFunction) => {
+        rbacMiddleware(req, res, next, "delete_company");
+      },
       this.get
     );
     this.router.post(`${this.path}/logout`, authenticated, this.logout);
     this.router.post(`${this.path}/refresh`, authenticated, this.refresh);
+    this.router.get(`${this.path}/buyer`, authenticated, this.buyerRoleCheck);
   }
+  private buyerRoleCheck = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<Response | void> => {};
   private logout = async (
     req: Request,
     res: Response,
@@ -71,9 +81,9 @@ class AuthController implements Controller {
   ): Promise<Response | void> => {
     try {
       await authenticated(req, res, next);
+
       res.status(200).json("Secret data");
     } catch (error: any) {
-      res.status(400).json({ error: error.message });
       next(new HttpException(400, error.message));
     }
   };

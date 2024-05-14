@@ -1,0 +1,22 @@
+{
+    "roles": [
+      {
+        "name": "owner",
+        "permissions": [
+            "create_company",
+            "open_company",
+            "update_company",
+            "delete_company"
+        ]
+      },
+      {
+        "name": "manager",
+        "permissions": [
+          "create_company",
+          "open_company",
+          "update_company"
+        ]
+      }
+      
+    ]
+  }
