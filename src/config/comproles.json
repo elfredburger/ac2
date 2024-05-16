@@ -1,0 +1,23 @@
+{
+    "roles": [
+      {
+        "name": "owner",
+        "permissions": [
+            "change_banking",
+            "open_company",
+            "update_company",
+            "delete_company"
+        ]
+      },
+      {
+        "name": "manager",
+        "permissions": [
+          
+          
+          "open_company",
+          "update_company"
+        ]
+      }
+      
+    ]
+  }

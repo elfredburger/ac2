@@ -1,21 +1,20 @@
 {
     "roles": [
       {
-        "name": "owner",
+        "name": "verifiedUser",
         "permissions": [
-            "create_company",
-            "open_company",
-            "update_company",
-            "delete_company"
+            
+            "open_marketplace"
+            
         ]
       },
       {
-        "name": "manager",
+        "name": "paidUser",
         "permissions": [
           
           "create_company",
-          "open_company",
-          "update_company"
+          "open_marketplace",
+          "trade"
         ]
       }
       

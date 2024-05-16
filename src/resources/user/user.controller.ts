@@ -22,6 +22,7 @@ class UserController implements Controller {
       this.userInfo
     );
     this.router.patch(`${this.path}/update`, authenticated, this.update);
+    this.router.delete(`${this.path}/delete`, authenticated, this.delete);
   }
 
   private userInfo = async (
@@ -47,7 +48,21 @@ class UserController implements Controller {
     try {
       const user = await this.UserService.updateUser(
         req.headers.authorization?.replace("Bearer ", "") as string,
-        req.body
+        req.body.user
+      );
+      res.status(200).json(user);
+    } catch (error: any) {
+      next(new HttpException(400, error.message));
+    }
+  };
+  private delete = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<Response | void> => {
+    try {
+      const user = await this.UserService.deleteUser(
+        req.headers.authorization?.replace("Bearer ", "") as string
       );
       res.status(200).json(user);
     } catch (error: any) {
