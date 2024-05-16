@@ -1,15 +1,11 @@
 import { Router, Request, Response, NextFunction } from "express";
-import Controller from "@utils/interfaces/controller.interface";
-import HttpException from "@utils/exceptions/http.exception";
-import validationMiddleware from "@middleware/validation.middleware";
-import validate from "@resources/user/user.validation";
-import AuthService from "@resources/auth/auth.service";
-import authenticated from "@middleware/authenticated.middleware";
-import User from "@resources/user/user.interface";
-import { error } from "console";
-import { JsonWebTokenError } from "jsonwebtoken";
-import errorMiddleware from "@middleware/error.middleware";
-import rbacMiddleware from "@middleware/rbac.middleware";
+import Controller from "../../utils/interfaces/controller.interface";
+import HttpException from "../../utils/exceptions/http.exception";
+import validationMiddleware from "../../middleware/validation.middleware";
+import validate from "../../resources/user/user.validation";
+import AuthService from "../../resources/auth/auth.service";
+import authenticated from "../../middleware/authenticated.middleware";
+import rbacMiddleware from "../../middleware/rbac.middleware";
 class AuthController implements Controller {
   public path = "/auth";
   public router = Router();
@@ -46,16 +42,22 @@ class AuthController implements Controller {
     res: Response,
     next: NextFunction
   ): Promise<Response | void> => {};
+
   private logout = async (
     req: Request,
     res: Response,
     next: NextFunction
   ): Promise<Response | void> => {
-    this.AuthService.logout(
-      req.headers.authorization?.replace("Bearer ", "") as string
-    );
-    res.status(200).json("logged out");
+    try {
+      this.AuthService.logout(
+        req.headers.authorization?.replace("Bearer ", "") as string
+      );
+      res.status(200).json("logged out");
+    } catch (error: any) {
+      next(new HttpException(400, error.message));
+    }
   };
+
   private refresh = async (
     req: Request,
     res: Response,
@@ -69,7 +71,6 @@ class AuthController implements Controller {
       const token = await this.AuthService.refresh(refreshToken);
       res.status(200).json({ token });
     } catch (error: any) {
-      res.status(400).json({ error: error.message });
       next(new HttpException(400, error.message));
     }
   };
@@ -95,10 +96,9 @@ class AuthController implements Controller {
   ): Promise<Response | void> => {
     try {
       const { email, password } = req.body;
-      const token = await this.AuthService.login(email, password);
-      res.status(200).json({ token });
+      const user = await this.AuthService.login(email, password);
+      res.status(200).json({ user });
     } catch (error: any) {
-      res.status(400).json({ error: error.message });
       next(new HttpException(400, error.message));
     }
   };
@@ -113,7 +113,6 @@ class AuthController implements Controller {
       const token = await this.AuthService.create(email, password);
       res.status(201).json({ token });
     } catch (error: any) {
-      res.status(400).json({ error: error.message });
       next(new HttpException(400, error.message));
     }
   };

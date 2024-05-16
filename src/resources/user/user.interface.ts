@@ -7,5 +7,8 @@ export default interface User extends Document {
   createdAt: Date;
   updatedAt: Date;
   token: string;
+  firstName: string;
+  secondName: string;
+  phoneNumber: string;
   comparePassword(password: string): Promise<boolean>;
 }

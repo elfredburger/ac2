@@ -1,21 +1,16 @@
 import UserModel from "./user.model";
 import User from "./user.interface";
-import token from "@utils/token";
 class UserService {
-  // private user = UserModel;
-  // public async findOne(email: string): Promise<User | null> {
-  //   const user = await this.user.findOne({ email: email });
-  //   return user;
-  // }
-  //   public async tokenUpdate(
-  //     email: string,
-  //     tokenInfo: string
-  //   ): Promise<User | null> {
-  //     const updatedUser = await this.user.findOneAndUpdate(
-  //       { email: email },
-  //       { token: tokenInfo },
-  //       { new: true }
-  //     );
-  //     return updatedUser;
-  //   }
+  private user = UserModel;
+  public async getUserInfo(token: string): Promise<User | Error> {
+    const user = await this.user.findOne({ token: token }).select("-password");
+    if (!user) {
+      throw new Error("User not found");
+    }
+    return user;
+  }
+  public async updateUser(token: string, data: any): Promise<User | Error> {
+    throw new Error("Not implemented");
+  }
 }
+export default UserService;

@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from "express";
-import HttpException from "@utils/exceptions/http.exception";
-import userModel from "@resources/user/user.model";
+import HttpException from "../utils/exceptions/http.exception";
+import userModel from "../resources/user/user.model";
 import roles from "../config/roles.json";
 async function rbacMiddleware(
   req: Request,

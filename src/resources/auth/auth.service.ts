@@ -1,9 +1,9 @@
 import UserModel from "../user/user.model";
 import User from "../user/user.interface";
-import token from "@utils/token";
-import HttpException from "@utils/exceptions/http.exception";
+import token from "../../utils/token";
+import HttpException from "../../utils/exceptions/http.exception";
 import { error } from "console";
-import Token from "@utils/interfaces/token.interface";
+import Token from "../../utils/interfaces/token.interface";
 class AuthService {
   private user = UserModel;
 
@@ -37,8 +37,7 @@ class AuthService {
     if (await userInfo.comparePassword(password)) {
       await this.user.findOneAndUpdate(
         { email: email },
-        { token: token.createToken(userInfo) },
-        { new: true }
+        { token: token.createToken(userInfo) }
       );
       const updatedUser = (await this.user.findOne({ email: email })) as User;
       return updatedUser;

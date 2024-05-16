@@ -12,6 +12,7 @@
       {
         "name": "manager",
         "permissions": [
+          
           "create_company",
           "open_company",
           "update_company"

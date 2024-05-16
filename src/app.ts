@@ -1,7 +1,7 @@
 import express, { Application } from "express";
 import mongoose from "mongoose";
-import Controller from "@utils/interfaces/controller.interface";
-import errorMiddleware from "@middleware/error.middleware";
+import Controller from "./utils/interfaces/controller.interface";
+import errorMiddleware from "./middleware/error.middleware";
 import cors from "cors";
 import helmet from "helmet";
 export default class App {
