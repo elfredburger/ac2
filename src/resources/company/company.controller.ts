@@ -21,9 +21,13 @@ class CompanyController implements Controller {
 
       this.companyinfo
     );
-    this.router.patch(`${this.path}/update`, authenticated, this.updateCompany);
+    this.router.patch(
+      `${this.path}/update/:id`,
+      authenticated,
+      this.updateCompany
+    );
     this.router.post(`${this.path}/create`, authenticated, this.create);
-    this.router.post(`${this.path}/delete`, authenticated, this.delete);
+    this.router.post(`${this.path}/delete/:id`, authenticated, this.delete);
   }
   private delete = async (
     req: Request,
